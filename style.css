@@ -1,0 +1,186 @@
+body{
+    margin: 0;
+    padding: 0 5vw 2vw 5vw;
+    background: linear-gradient(145deg, rgba(245,255,250,1) 0%, rgba(135,206,250,1) 100%);
+    background-attachment: fixed;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+}
+#adding{
+    position: fixed;
+    display: flex;
+    justify-content: space-around;
+    width: 15vw;
+    z-index: 3;
+    top: 15px;
+    right: 10px;
+    padding: 2vw;
+}
+#adding > input{
+    border-radius: 25px;
+    border: solid silver;
+    padding: 5px;
+    width: 10vw;
+    text-align: center;
+    font-weight: bold;
+    font-size: 20px;
+    box-shadow: gray 1px 1px 5px inset;
+    transition: font-size 0.5s, width 0.5s;
+}
+#adding > button{
+    cursor: pointer;
+    background-color: RoyalBlue;
+    font-size: 25px;
+    font-weight: bold;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 25px;
+    aspect-ratio: 1;
+}
+/* #adding > input:focus{
+    width: 15vw;
+    font-size: 4em;
+} */
+header{
+    /* background-color: cornflowerblue; */
+    background: linear-gradient(315deg, rgba(65,105,225,1) 16%, rgba(135,206,235,1) 100%);
+    background-attachment: fixed;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    margin:  auto;
+    padding: 2vh;
+    text-align: center;
+    width: 50%;
+    height: 7vw;
+    overflow: hidden;
+}
+h1{
+    position: relative;
+    z-index: 2;
+    margin: 0px;
+    color: white;
+    font-size: 7vh;
+}
+h2{
+    margin: 0px;
+    position: relative;
+    z-index: 2;
+    left: 20vh;
+    top: -2vh;
+    font-style: italic;
+}
+.falling-container {
+    position: relative;
+    overflow: hidden;
+}
+.falling-ball {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    animation: fall linear infinite, rotate linear infinite;
+    top: -25px;
+    filter: blur(0px);
+}
+
+/* Falling animation */
+@keyframes fall {
+    from {
+        top: -50px;
+        opacity: 1;
+    }
+    to {
+        top: 30vh;
+        opacity: 0.5;
+    }
+}
+
+/* Rotation animation */
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+.match{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 12vw;
+    height: 6vw;
+    padding: 1px;
+    background-color: white;
+    box-shadow: 0px 2px 10px 1px gray;
+    border-radius: 15px;
+    transition: transform 0.2s;
+}
+.match:hover{
+    transform: scale(110%);
+}
+.match:focus-within{
+    transform: scale(115%);
+}
+.match label{
+    padding-left: 0.5vw;
+}
+.match label > span{
+    background-color: SkyBlue;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+    padding: 3px 5px 3px 8px;
+}
+.match input{
+    text-align: center;
+    border: none;
+    padding: 2px;
+    background-color: GhostWhite;
+    font-size: 20px;
+    font-weight: bolder;
+    width: 75%;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+}
+.lucky label:first-of-type input:first-of-type{
+    color: SeaGreen;
+    background-color: PaleGoldenRod;
+}
+.additional label input, .lucky label input{
+    color: gray;
+}
+.additional{
+    box-shadow: none;
+}
+.brackets{
+    position: absolute;
+    z-index: 2;
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    
+    /* grid-template-columns: repeat(2, 1fr); */
+}
+#level1{
+    row-gap: 60%;
+    column-gap: 2vh;
+    height: 32vw;
+    width: 90vw;
+    bottom: 3vw;
+}
+#level2{
+    column-gap: 2vw;
+    height: 20vw;
+    width: 80vw;
+    left: 10vw;
+    bottom: 7vw;
+}
+
+#logo{
+    position: absolute;
+    top: 3vh;
+    left: 3vw;
+    height: 15vh;
+
+}
+
