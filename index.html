@@ -1,153 +1,172 @@
 <!DOCTYPE html>
 <html lang="pl-PL">
-<head>
-    <meta charset="UTF-8">
-    <title>Drabinka - Liga elektornika</title>
-    <meta name="author" content="FramesPearSecond">
-    <link rel="icon" type="image/x-icon" href="Elektronik-logo.ico">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <header class="falling-container">
-        <h1>Liga Elektronika</h1>
-        <h2>Piłka nożna</h2>
-    </header>
-    <img id="logo" src="Elektronik-logo.ico">
-    <div id="adding">
-        <input type="text" id="input">
-        
-        <button id="add">+</button>
-    </div>
-    <section>
-        <div id="level1" class="brackets"></div>
-        <div id="level2" class="brackets"></div>
-    </section>
-<script>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Drabinka - Liga elektornika</title>
+		<meta name="author" content="FramesPearSecond" />
+		<link rel="icon" type="image/x-icon" href="Elektronik-logo.ico" />
+		<link rel="stylesheet" href="style.css" />
+	</head>
+	<body>
+		<header class="falling-container">
+            <h3>Losowanie</h3>
+			<h1>Liga Elektronika</h1>
+			<h2>Piłka nożna</h2>
+		</header>
+		<img id="logo" src="Elektronik-logo.ico" />
+		<form id="adding">
+			<input type="text" id="input" autocomplete="off"/>
+			<button id="add">+</button>
+		</form>
+		<section>
+			<div id="level1" class="brackets"></div>
+            <div id="level2" class="brackets"></div>
+		</section>
+		<script>
+			function createMatch(idA, nameA, idB, nameB) {
+				let div = document.createElement("div");
 
-    function createMatch(idA, nameA, idB, nameB){
-            let div = document.createElement('div');
+				let teamA = document.createElement("input");
+				let teamB = document.createElement("input");
 
-            let teamA = document.createElement('input');
-            let teamB = document.createElement('input');
+				let labelA = document.createElement("label");
+				let labelB = document.createElement("label");
 
-            let labelA = document.createElement('label');
-            let labelB = document.createElement('label');
+				let spanA = document.createElement("span");
+				let spanB = document.createElement("span");
 
-            let spanA = document.createElement("span");
-            let spanB = document.createElement("span");
+				let vs = document.createElement("span");
+				vs.innerText = "VS";
 
-            let vs = document.createElement('span');
-            vs.innerText = "VS";
+				teamA.value = nameA || "";
+				spanA.innerText = idA + "/16";
+				// labelA.appendChild(spanA);
+				labelA.appendChild(teamA);
 
-            teamA.value = nameA || "";
-            spanA.innerText = idA +".";
-            labelA.appendChild(spanA);
-            labelA.appendChild(teamA);
+				teamB.value = nameB || "";
+				// spanB.innerText = idB + ".";
+				// labelB.appendChild(spanB);
+				labelB.appendChild(teamB);
 
-            teamB.value = nameB || "";
-            spanB.innerText = idB +".";
-            labelB.appendChild(spanB);
-            labelB.appendChild(teamB);
+                // div.appendChild(spanA);
+				div.appendChild(labelA);
+				div.appendChild(vs);
+				div.appendChild(labelB);
 
-            div.appendChild(labelA);
-            div.appendChild(vs);
-            div.appendChild(labelB);
+				div.className = "match";
 
-            div.className = "match";
+				return div;
+			}
 
-            return div;
-    }
+			function display(teams) {
+				let level2 = document.getElementById("level2");
+				level2.innerHTML = "";
 
-    function display(teams){
+				for (let i = 0; i < 4; i++) {
+					let text = (teams[2 * i + 4] || "") + " / " + (teams[2 * i + 5] || "");
 
-        let level2 = document.getElementById('level2');
-        level2.innerHTML = "";
+					let div = createMatch(i + 1, teams[i], "", text);
+					div.className += " lucky";
 
-        for(let i = 0; i < 4; i++){
-            
-            let text = (teams[2*i+4] || "") + " / " + (teams[2*i+5] || "");
+					level2.appendChild(div);
+				}
 
-            let div = createMatch(i+1, teams[i], "", text);
-            div.className += " lucky"
+				for (let i = 5; i < 9; i++) {
+					let textA = (teams[4 * i - 7] || "") + " / " + (teams[4 * i - 8] || "");
+					let textB = (teams[4 * i - 6] || "") + " / " + (teams[4 * i - 5] || "");
+					let div = createMatch("", textA, "", textB);
+					div.className += " additional";
+					level2.appendChild(div);
+				}
 
-            level2.appendChild(div);
-        }
+				let level1 = document.getElementById("level1");
+				level1.innerHTML = "";
 
-        for(let i = 5; i < 9; i++){
+				for (let i = 4; i < 28; i += 2) {
+					let div = createMatch(i + 1, teams[i], i + 2, teams[i + 1]);
 
-            let textA = (teams[4*i-7] || "") + " / " + (teams[4*i-8] || "");
-            let textB = (teams[4*i-6] || "") + " / " + (teams[4*i-5] || "");
-            let div = createMatch("", textA, "", textB);
-            div.className += " additional"
-            level2.appendChild(div);
-        }
-        
-        
-        let level1 = document.getElementById('level1');
-        level1.innerHTML = "";
+					level1.appendChild(div);
+				}
 
-        for(let i = 4; i < 28; i+=2){
+				sessionStorage.setItem("Brackets", JSON.stringify(teams));
+			}
 
-            let div = createMatch(i+1, teams[i], i+2, teams[i+1]);
+			let addButton = document.getElementById("add");
 
-            level1.appendChild(div);
-        }
+			addButton.addEventListener("click", e => {
+                e.preventDefault();
+				let teamName = document.getElementById("input").value.toUpperCase();
+				document.getElementById("input").value = "";
 
-        sessionStorage.setItem("Brackets", JSON.stringify(teams));
-    }
+				teams.push(teamName);
+				console.log(teams);
 
-    let addButton = document.getElementById('add');
-    
-    addButton.addEventListener('click', () => {
+				display(teams);
+			});
 
-        let teamName = document.getElementById('input').value;
-        document.getElementById('input').value = "";
+			let teams = [
+                "3D",
+                "2D",
+                "3C",
+                "3F",
+                "2G",
+                "2A",
+                "3I",
+                "5E",
+                "5G",
+                "4A",
+                "3B",
+                "2I",
+                "1E",
+                "2E",
+                "3H",
+                "5D",
+                "2C",
+                "1C",
+                "4F",
+                "4E",
+                "3G",
+                "5A",
+                "2H",
+                "3J",
+                "3E",
+                "3A",
+                "4D",
+                "2F"
+            ]
 
-        teams.push(teamName);
-        console.log(teams);
+			display(teams);
 
-        display(teams);
-    });
+			document.addEventListener("DOMContentLoaded", function () {
+				const header = document.querySelector(".falling-container");
 
-    let teams = [
-        // "1C", "1E", "2A", "2C", "2D", "2E", "2F", "2H", "2I",
-        // "3A", "3B", "3C", "3D", "3E", "3F", "3G", "3H", "3I", 
-        // "3J", "4A", "4D", "4E", "4F", "5A", "5D", "5E", "5G", "XD"
-    ];
+				function createFallingBall() {
+					const ball = document.createElement("img");
+					ball.src = "pilka.png";
+					ball.classList.add("falling-ball");
+					const randomLeft = Math.random() * 90 + "%";
+					const randomDuration = Math.random() * 2 + 2 + "s";
+					const randomBlur = Math.random() * 5 + "px";
+					const randomRotationSpeed = Math.random() * 2 + 1 + "s";
+					const randomDirection = Math.random() < 0.5 ? "normal" : "reverse";
 
-    display(teams);
+					// Apply styles
+					ball.style.left = randomLeft;
+					ball.style.animationDuration = `${randomDuration}, ${randomRotationSpeed}`;
+					ball.style.animationTimingFunction = "linear, linear";
+					ball.style.animationName = "fall, rotate";
+					ball.style.animationDirection = `normal, ${randomDirection}`;
+					ball.style.filter = `blur(${randomBlur})`;
 
-    document.addEventListener("DOMContentLoaded", function () {
-    const header = document.querySelector(".falling-container");
+					header.appendChild(ball);
 
-    function createFallingBall() {
-        const ball = document.createElement("img");
-        ball.src = "pilka.png";
-        ball.classList.add("falling-ball");
-        const randomLeft = Math.random() * 90 + "%"; // Random horizontal position
-        const randomDuration = Math.random() * 2 + 2 + "s"; // Random fall speed (2s to 4s)
-        const randomBlur = Math.random() * 5 + "px"; // Random blur (0px to 5px)
-        const randomRotationSpeed = Math.random() * 2 + 1 + "s"; // Random rotation speed (1s to 3s)
-        const randomDirection = Math.random() < 0.5 ? "normal" : "reverse"; // Random rotation direction
+					setTimeout(() => {
+						ball.remove();
+					}, 20000);
+				}
 
-        // Apply styles
-        ball.style.left = randomLeft;
-        ball.style.animationDuration = `${randomDuration}, ${randomRotationSpeed}`;
-        ball.style.animationTimingFunction = "linear, linear"; // Ensure both animations are smooth
-        ball.style.animationName = "fall, rotate";
-        ball.style.animationDirection = `normal, ${randomDirection}`;
-        ball.style.filter = `blur(${randomBlur})`;
-
-        header.appendChild(ball);
-
-        setTimeout(() => {
-            ball.remove();
-        },12000); 
-    }
-
-    setInterval(createFallingBall, 2500); 
-});
-
-</script>
-</body>
+				setInterval(createFallingBall, 3000);
+			});
+		</script>
+	</body>
 </html>
