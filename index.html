@@ -9,11 +9,9 @@
 	</head>
 	<body>
 		<header class="falling-container">
-            <h3>Losowanie</h3>
 			<h1>Liga Elektronika</h1>
-			<h2>Piłka nożna</h2>
 		</header>
-		<img id="logo" src="Elektronik-logo.ico" />
+		<img id="logo" src="Elektronik logo 60.png" />
 		<form id="adding">
 			<input type="text" id="input" autocomplete="off"/>
 			<button id="add">+</button>
@@ -142,7 +140,7 @@
 
 				function createFallingBall() {
 					const ball = document.createElement("img");
-					ball.src = "pilka.png";
+					ball.src = "volleyball.webp";
 					ball.classList.add("falling-ball");
 					const randomLeft = Math.random() * 90 + "%";
 					const randomDuration = Math.random() * 2 + 2 + "s";
@@ -162,7 +160,7 @@
 
 					setTimeout(() => {
 						ball.remove();
-					}, 20000);
+					}, 20 * 1000);
 				}
 
 				setInterval(createFallingBall, 3000);
