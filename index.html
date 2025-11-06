@@ -8,17 +8,19 @@
 		<link rel="stylesheet" href="style.css" />
 	</head>
 	<body>
-		<header class="falling-container">
-			<h1>Liga Elektronika</h1>
-		</header>
-		<img id="logo" src="Elektronik logo 60.png" />
-		<form id="adding">
-			<input type="text" id="input" autocomplete="off"/>
-			<button id="add">+</button>
-		</form>
+		<div>
+			<header class="falling-container">
+				<h1>Liga Elektronika</h1>
+			</header>
+			<img id="logo" src="Elektronik logo 60.png" />
+			<form id="adding">
+				<input type="text" id="input" autocomplete="off" />
+				<button id="add">+</button>
+			</form>
+		</div>
 		<section>
 			<div id="level1" class="brackets"></div>
-            <div id="level2" class="brackets"></div>
+			<div id="level2" class="brackets"></div>
 		</section>
 		<script>
 			function createMatch(idA, nameA, idB, nameB) {
@@ -46,7 +48,7 @@
 				// labelB.appendChild(spanB);
 				labelB.appendChild(teamB);
 
-                // div.appendChild(spanA);
+				// div.appendChild(spanA);
 				div.appendChild(labelA);
 				div.appendChild(vs);
 				div.appendChild(labelB);
@@ -58,22 +60,22 @@
 
 			function updateTeamsFromDOM() {
 				// Read all current input values from the DOM and reconstruct the teams array
-				let updatedTeams = new Array(28);
+				let updatedTeams = new Array(32);
 				let level1 = document.getElementById("level1");
 				let level2 = document.getElementById("level2");
 
 				// Get all matches from level2 lucky section (first 4 matches)
-				let level2Matches = level2.querySelectorAll(".match.lucky");
-				for (let i = 0; i < 4 && i < level2Matches.length; i++) {
-					let inputs = level2Matches[i].querySelectorAll("input");
-					if (inputs[0]) updatedTeams[i] = inputs[0].value;
-					// Extract team names from the "text" format (name1 / name2)
-					if (inputs[1]) {
-						let parts = inputs[1].value.split(" / ");
-						updatedTeams[2 * i + 4] = parts[0] || "";
-						updatedTeams[2 * i + 5] = parts[1] || "";
-					}
-				}
+				// let level2Matches = level2.querySelectorAll(".match.lucky");
+				// for (let i = 0; i < 4 && i < level2Matches.length; i++) {
+				// 	let inputs = level2Matches[i].querySelectorAll("input");
+				// 	if (inputs[0]) updatedTeams[i] = inputs[0].value;
+				// 	// Extract team names from the "text" format (name1 / name2)
+				// 	if (inputs[1]) {
+				// 		let parts = inputs[1].value.split(" / ");
+				// 		updatedTeams[2 * i + 4] = parts[0] || "";
+				// 		updatedTeams[2 * i + 5] = parts[1] || "";
+				// 	}
+				// }
 
 				// Get all matches from level2 additional section (next 4 matches)
 				let level2AdditionalMatches = level2.querySelectorAll(".match.additional");
@@ -95,7 +97,7 @@
 				// Get all matches from level1
 				let level1Matches = level1.querySelectorAll(".match");
 				let matchIndex = 0;
-				for (let i = 4; i < 28 && matchIndex < level1Matches.length; i += 2) {
+				for (let i = 0; i < 32 && matchIndex < level1Matches.length; i += 2) {
 					let inputs = level1Matches[matchIndex].querySelectorAll("input");
 					if (inputs[0]) updatedTeams[i] = inputs[0].value;
 					if (inputs[1]) updatedTeams[i + 1] = inputs[1].value;
@@ -109,18 +111,18 @@
 				let level2 = document.getElementById("level2");
 				level2.innerHTML = "";
 
-				for (let i = 0; i < 4; i++) {
-					let text = (teams[2 * i + 4] || "") + " / " + (teams[2 * i + 5] || "");
+				// for (let i = 0; i < 1; i++) {
+				// 	let text = (teams[2 * i + 4] || "") + " / " + (teams[2 * i + 5] || "");
 
-					let div = createMatch(i + 1, teams[i], "", text);
-					div.className += " lucky";
+				// 	let div = createMatch(i + 1, teams[i], "", text);
+				// 	div.className += " lucky";
 
-					level2.appendChild(div);
-				}
+				// 	level2.appendChild(div);
+				// }
 
-				for (let i = 5; i < 9; i++) {
-					let textA = (teams[4 * i - 7] || "") + " / " + (teams[4 * i - 8] || "");
-					let textB = (teams[4 * i - 6] || "") + " / " + (teams[4 * i - 5] || "");
+				for (let i = 0; i < 32; i += 4) {
+					let textA = (teams[i] || "") + " / " + (teams[i + 1] || "");
+					let textB = (teams[i + 2] || "") + " / " + (teams[i + 3] || "");
 					let div = createMatch("", textA, "", textB);
 					div.className += " additional";
 					level2.appendChild(div);
@@ -128,8 +130,7 @@
 
 				let level1 = document.getElementById("level1");
 				level1.innerHTML = "";
-
-				for (let i = 4; i < 28; i += 2) {
+				for (let i = 0; i < 32; i += 2) {
 					let div = createMatch(i + 1, teams[i], i + 2, teams[i + 1]);
 
 					level1.appendChild(div);
@@ -141,7 +142,7 @@
 			let addButton = document.getElementById("add");
 
 			addButton.addEventListener("click", e => {
-                e.preventDefault();
+				e.preventDefault();
 				// Update the teams array with any manual changes made in the input fields
 				teams = updateTeamsFromDOM();
 
@@ -149,7 +150,7 @@
 				document.getElementById("input").value = "";
 
 				// Find the first empty index in the teams array and set the team there
-				for (let i = 0; i < 28; i++) {
+				for (let i = 0; i < 32; i++) {
 					if (!teams[i] || teams[i] === "") {
 						teams[i] = teamName;
 						break;
@@ -162,35 +163,35 @@
 			});
 
 			let teams = [
-                // "3D",
-                // "2D",
-                // "3C",
-                // "3F",
-                // "2G",
-                // "2A",
-                // "3I",
-                // "5E",
-                // "5G",
-                // "4A",
-                // "3B",
-                // "2I",
-                // "1E",
-                // "2E",
-                // "3H",
-                // "5D",
-                // "2C",
-                // "1C",
-                // "4F",
-                // "4E",
-                // "3G",
-                // "5A",
-                // "2H",
-                // "3J",
-                // "3E",
-                // "3A",
-                // "4D",
-                // "2F"
-            ]
+				// "3D",
+				// "2D",
+				// "3C",
+				// "3F",
+				// "2G",
+				// "2A",
+				// "3I",
+				// "5E",
+				// "5G",
+				// "4A",
+				// "3B",
+				// "2I",
+				// "1E",
+				// "2E",
+				// "3H",
+				// "5D",
+				// "2C",
+				// "1C",
+				// "4F",
+				// "4E",
+				// "3G",
+				// "5A",
+				// "2H",
+				// "3J",
+				// "3E",
+				// "3A",
+				// "4D",
+				// "2F"
+			];
 
 			display(teams);
 
