@@ -1,230 +1,361 @@
 <!DOCTYPE html>
 <html lang="pl-PL">
-	<head>
-		<meta charset="UTF-8" />
-		<title>Drabinka - Liga elektornika</title>
-		<meta name="author" content="FramesPearSecond" />
-		<link rel="icon" type="image/x-icon" href="Elektronik-logo.ico" />
-		<link rel="stylesheet" href="style.css" />
-	</head>
-	<body>
-		<div>
-			<header class="falling-container">
-				<h1>Liga Elektronika</h1>
-			</header>
-			<img id="logo" src="Elektronik logo 60.png" />
-			<form id="adding">
-				<input type="text" id="input" autocomplete="off" />
-				<button id="add">+</button>
-			</form>
-		</div>
-		<section>
-			<div id="level1" class="brackets"></div>
-			<div id="level2" class="brackets"></div>
-		</section>
-		<script>
-			function createMatch(idA, nameA, idB, nameB) {
-				let div = document.createElement("div");
 
-				let teamA = document.createElement("input");
-				let teamB = document.createElement("input");
+<head>
+	<meta charset="UTF-8" />
+	<title>Drabinka - Liga elektornika</title>
+	<meta name="author" content="FramesPearSecond" />
+	<link rel="icon" type="image/x-icon" href="Elektronik-logo.ico" />
+	<link rel="stylesheet" href="style.css" />
+</head>
 
-				let labelA = document.createElement("label");
-				let labelB = document.createElement("label");
+<body>
+	<div>
+		<header class="falling-container">
+			<h1>Liga Elektronika</h1>
+		</header>
+		<img id="logo" src="Elektronik-logo-green.png" />
+		<form id="adding">
+			<input type="text" id="input" autocomplete="off" />
+			<button id="add">+</button>
+		</form>
+	</div>
+	<section>
+		<div class="day-label monday">Poniedziałek</div>
+		<div class="day-label tuesday">Wtorek</div>
 
-				let spanA = document.createElement("span");
-				let spanB = document.createElement("span");
+		<div id="level1" class="brackets"></div>
+		<div id="level2" class="brackets"></div>
+	</section>
+	<script>
 
-				let vs = document.createElement("span");
-				vs.innerText = "VS";
+		let currentMode = "volleyball";
+		let teamCountVolleyball = 32;
+		let teamCountFootball = 28;
+		let teamCount = teamCountVolleyball;
 
-				teamA.value = nameA || "";
-				spanA.innerText = idA + "/16";
-				// labelA.appendChild(spanA);
-				labelA.appendChild(teamA);
+		let teamsStorage = {
+			volleyball: JSON.parse(sessionStorage.getItem("Brackets_volleyball")) || [],
+			football: JSON.parse(sessionStorage.getItem("Brackets_football")) || []
+		};
 
+		// Normalize stored old format
+		if (teamsStorage.volleyball.length === 0) {
+			let oldData = sessionStorage.getItem("Brackets");
+			if (oldData) {
+				teamsStorage.volleyball = JSON.parse(oldData);
+				sessionStorage.setItem("Brackets_volleyball", oldData);
+			}
+		}
+
+		// Helper: force array to exact length (truncate or pad with "")
+		function normalizeArray(arr, length) {
+			if (!Array.isArray(arr)) arr = [];
+			if (arr.length > length) {
+				arr = arr.slice(0, length);
+			} else if (arr.length < length) {
+				while (arr.length < length) arr.push("");
+			}
+			return arr;
+		}
+
+		// Ensure both storages have correct lengths for their modes
+		teamsStorage.volleyball = normalizeArray(teamsStorage.volleyball, teamCountVolleyball);
+		teamsStorage.football = normalizeArray(teamsStorage.football, teamCountFootball);
+
+		let teams = teamsStorage[currentMode];
+
+		function createMatch(idA, nameA, idB, nameB, isSingle = false) {
+			let div = document.createElement("div");
+
+			let teamA = document.createElement("input");
+			let teamB = document.createElement("input");
+
+			let labelA = document.createElement("label");
+			let labelB = document.createElement("label");
+
+			let spanA = document.createElement("span");
+			let spanB = document.createElement("span");
+
+			let vs = document.createElement("span");
+			vs.innerText = "VS";
+
+			teamA.value = nameA || "";
+			// opcjonalnie: pokazuj indeksy tylko gdy są przekazane
+			if (idA) spanA.innerText = idA + "/" + (teamCount / 2);
+			labelA.appendChild(teamA);
+
+			div.appendChild(labelA);
+
+			if (!isSingle) {
 				teamB.value = nameB || "";
-				// spanB.innerText = idB + ".";
-				// labelB.appendChild(spanB);
 				labelB.appendChild(teamB);
-
-				// div.appendChild(spanA);
-				div.appendChild(labelA);
 				div.appendChild(vs);
 				div.appendChild(labelB);
-
-				div.className = "match";
-
-				return div;
+			} else {
+				let awans = document.createElement("span");
+				awans.innerText = "Awans";
+				awans.style.marginLeft = "10px";
+				awans.style.color = "#888";
+				awans.style.fontWeight = "bold";
+				div.appendChild(awans);
 			}
 
-			function updateTeamsFromDOM() {
-				// Read all current input values from the DOM and reconstruct the teams array
-				let updatedTeams = new Array(32);
-				let level1 = document.getElementById("level1");
-				let level2 = document.getElementById("level2");
+			div.className = "match";
 
-				// Get all matches from level2 lucky section (first 4 matches)
-				// let level2Matches = level2.querySelectorAll(".match.lucky");
-				// for (let i = 0; i < 4 && i < level2Matches.length; i++) {
-				// 	let inputs = level2Matches[i].querySelectorAll("input");
-				// 	if (inputs[0]) updatedTeams[i] = inputs[0].value;
-				// 	// Extract team names from the "text" format (name1 / name2)
-				// 	if (inputs[1]) {
-				// 		let parts = inputs[1].value.split(" / ");
-				// 		updatedTeams[2 * i + 4] = parts[0] || "";
-				// 		updatedTeams[2 * i + 5] = parts[1] || "";
-				// 	}
-				// }
+			return div;
+		}
 
-				// Get all matches from level2 additional section (next 4 matches)
-				let level2AdditionalMatches = level2.querySelectorAll(".match.additional");
-				for (let i = 0; i < 4 && i < level2AdditionalMatches.length; i++) {
-					let inputs = level2AdditionalMatches[i].querySelectorAll("input");
-					let currentI = 5 + i;
+		function updateTeamsFromDOM() {
+			// Zwraca zaktualizowaną tablicę teams o długości teamCount
+			let updatedTeams = new Array(teamCount);
+			for (let i = 0; i < teamCount; i++) updatedTeams[i] = "";
+
+			let level2 = document.getElementById("level2");
+			let level2Matches = level2.querySelectorAll(".match.additional");
+
+			if (currentMode === "football") {
+				// Każdy dodatkowy match ma dwa inputy: lewy = "A / B" (mecz X), prawy = "C / D" (mecz Y)
+				for (let i = 0; i < level2Matches.length; i++) {
+					let inputs = level2Matches[i].querySelectorAll("input");
+					// lewy input -> odpowiada dwóm drużynom (startIndex)
 					if (inputs[0]) {
 						let parts = inputs[0].value.split(" / ");
-						updatedTeams[4 * currentI - 7] = parts[0] || "";
-						updatedTeams[4 * currentI - 8] = parts[1] || "";
+						let startIndex = i * 4; // tymczasowe miejsce; ale lepiej zapisać bezpośrednio do właściwych pozycji poniżej
+						// W footballie chcemy zapisać dokładnie te 2 drużyny w odpowiednie miejsca:
+						// Obliczymy docelowe indeksy na podstawie mapowania w display()
+						// Aby zachować prostotę: odczytujemy wartości i zapisujemy w tablicy pomocniczej w kolejności liniowej
+						updatedTeams[startIndex] = parts[0] || "";
+						updatedTeams[startIndex + 1] = parts[1] || "";
 					}
 					if (inputs[1]) {
 						let parts = inputs[1].value.split(" / ");
-						updatedTeams[4 * currentI - 6] = parts[0] || "";
-						updatedTeams[4 * currentI - 5] = parts[1] || "";
+						let startIndex = i * 4 + 2;
+						updatedTeams[startIndex] = parts[0] || "";
+						updatedTeams[startIndex + 1] = parts[1] || "";
 					}
 				}
 
-				// Get all matches from level1
+				// Teraz nadpiszemy updatedTeams tak, aby odpowiadały rzeczywistej pozycji w głównej tablicy teams:
+				// Ponieważ w display() dla football tworzymy level2 z par meczów (1,2),(3,4),(5,6),(8,9),(10,11),(12,13),(7,14)
+				// musimy odtworzyć liniową tablicę teams (28 elementów) z wartości odczytanych powyżej.
+				// Podejście: jeśli pola level1 (poziom 1) istnieją, odczytamy je i nadpiszemy odpowiednie miejsca.
+				let level1 = document.getElementById("level1");
+				let level1Matches = level1.querySelectorAll(".match");
+				for (let m = 0; m < level1Matches.length; m++) {
+					let inputs = level1Matches[m].querySelectorAll("input");
+					let teamA = inputs[0] ? inputs[0].value : "";
+					let teamB = inputs[1] ? inputs[1].value : "";
+					let idx = m * 2;
+					if (idx < teamCount) updatedTeams[idx] = teamA || "";
+					if (idx + 1 < teamCount) updatedTeams[idx + 1] = teamB || "";
+				}
+
+			} else {
+				// Dotychczasowa logika dla volleyball (każdy additional match reprezentuje 4 drużyny)
+				let level2AdditionalMatches = level2.querySelectorAll(".match.additional");
+				for (let i = 0; i < level2AdditionalMatches.length; i++) {
+					let inputs = level2AdditionalMatches[i].querySelectorAll("input");
+					if (inputs[0]) {
+						let parts = inputs[0].value.split(" / ");
+						updatedTeams[i * 4] = parts[0] || "";
+						updatedTeams[i * 4 + 1] = parts[1] || "";
+					}
+					if (inputs[1]) {
+						let parts = inputs[1].value.split(" / ");
+						updatedTeams[i * 4 + 2] = parts[0] || "";
+						updatedTeams[i * 4 + 3] = parts[1] || "";
+					}
+				}
+
+				let level1 = document.getElementById("level1");
 				let level1Matches = level1.querySelectorAll(".match");
 				let matchIndex = 0;
-				for (let i = 0; i < 32 && matchIndex < level1Matches.length; i += 2) {
+				for (let i = 0; i < teamCount && matchIndex < level1Matches.length; i += 2) {
 					let inputs = level1Matches[matchIndex].querySelectorAll("input");
 					if (inputs[0]) updatedTeams[i] = inputs[0].value;
 					if (inputs[1]) updatedTeams[i + 1] = inputs[1].value;
 					matchIndex++;
 				}
-
-				return updatedTeams;
 			}
 
-			function display(teams) {
-				let level2 = document.getElementById("level2");
-				level2.innerHTML = "";
+			return updatedTeams;
+		}
 
-				// for (let i = 0; i < 1; i++) {
-				// 	let text = (teams[2 * i + 4] || "") + " / " + (teams[2 * i + 5] || "");
+		function display(teamsArr) {
+			teamsArr = normalizeArray(teamsArr, teamCount);
 
-				// 	let div = createMatch(i + 1, teams[i], "", text);
-				// 	div.className += " lucky";
+			let level2 = document.getElementById("level2");
+			level2.innerHTML = "";
 
-				// 	level2.appendChild(div);
-				// }
+			if (currentMode === "football") {
+				// Mapowanie par meczów (1-based match numbers)
+				const pairs = [
+					[1, 2],
+					[3, 4],
+					[5, 6],
+					[8, 9],
+					[10, 11],
+					[12, 13],
+					[7, 14]
+				];
 
-				for (let i = 0; i < 32; i += 4) {
-					let textA = (teams[i] || "") + " / " + (teams[i + 1] || "");
-					let textB = (teams[i + 2] || "") + " / " + (teams[i + 3] || "");
-					let div = createMatch("", textA, "", textB);
+				// Dla każdego pair tworzymy dodatkowy match z dwoma inputami:
+				// lewy input = "teamA / teamB" z meczu X
+				// prawy input = "teamC / teamD" z meczu Y
+				for (let p = 0; p < pairs.length; p++) {
+					let [m1, m2] = pairs[p];
+					let idx1 = (m1 - 1) * 2; // indeks pierwszego zawodnika meczu m1
+					let idx2 = (m2 - 1) * 2;
+
+					let textA = "";
+					let textB = "";
+
+					// zbuduj lewy tekst (mecz m1)
+					if (idx1 < teamCount) {
+						let a = teamsArr[idx1] || "";
+						let b = (idx1 + 1 < teamCount) ? (teamsArr[idx1 + 1] || "") : "";
+						textA = a + (b ? " / " + b : "");
+					}
+
+					// zbuduj prawy tekst (mecz m2)
+					if (idx2 < teamCount) {
+						let c = teamsArr[idx2] || "";
+						let d = (idx2 + 1 < teamCount) ? (teamsArr[idx2 + 1] || "") : "";
+						textB = c + (d ? " / " + d : "");
+					}
+
+					let div = createMatch("", textA, "", textB, false);
 					div.className += " additional";
 					level2.appendChild(div);
 				}
+			} else {
+				// oryginalny kod siatkówki (po 4 drużyny na dodatkowy match)
+				for (let i = 0; i < teamCount; i += 4) {
+					let textA = "";
+					let textB = "";
+					let isSingle = false;
 
-				let level1 = document.getElementById("level1");
-				level1.innerHTML = "";
-				for (let i = 0; i < 32; i += 2) {
-					let div = createMatch(i + 1, teams[i], i + 2, teams[i + 1]);
+					if (i + 1 < teamCount) {
+						textA = (teamsArr[i] || "") + " / " + (teamsArr[i + 1] || "");
+					} else {
+						textA = (teamsArr[i] || "");
+					}
 
-					level1.appendChild(div);
+					if (i + 3 < teamCount) {
+						textB = (teamsArr[i + 2] || "") + " / " + (teamsArr[i + 3] || "");
+					} else if (i + 2 < teamCount) {
+						textB = (teamsArr[i + 2] || "");
+					} else {
+						isSingle = true;
+					}
+
+					let div = createMatch("", textA, "", textB, isSingle);
+					div.className += " additional";
+					level2.appendChild(div);
 				}
-
-				sessionStorage.setItem("Brackets", JSON.stringify(teams));
 			}
 
-			let addButton = document.getElementById("add");
+			// level1 (zawsze pary po 2)
+			let level1 = document.getElementById("level1");
+			level1.innerHTML = "";
+			for (let i = 0; i < teamCount; i += 2) {
+				let isSingle = (i + 1 >= teamCount);
+				let div = createMatch(i + 1, teamsArr[i], i + 2, teamsArr[i + 1], isSingle);
+				level1.appendChild(div);
+			}
 
-			addButton.addEventListener("click", e => {
-				e.preventDefault();
-				// Update the teams array with any manual changes made in the input fields
-				teams = updateTeamsFromDOM();
+			// Zapisz znormalizowaną tablicę
+			teamsStorage[currentMode] = teamsArr;
+			sessionStorage.setItem("Brackets_" + currentMode, JSON.stringify(teamsArr));
+		}
 
-				let teamName = document.getElementById("input").value.toUpperCase();
-				document.getElementById("input").value = "";
 
-				// Find the first empty index in the teams array and set the team there
-				for (let i = 0; i < 32; i++) {
-					if (!teams[i] || teams[i] === "") {
-						teams[i] = teamName;
-						break;
-					}
+		let addButton = document.getElementById("add");
+
+		addButton.addEventListener("click", e => {
+			e.preventDefault();
+			teams = updateTeamsFromDOM();
+
+			let teamName = document.getElementById("input").value.toUpperCase();
+			document.getElementById("input").value = "";
+
+			for (let i = 0; i < teamCount; i++) {
+				if (!teams[i] || teams[i] === "") {
+					teams[i] = teamName;
+					break;
 				}
-
-				console.log(teams);
-
-				display(teams);
-			});
-
-			let teams = [
-				// "3D",
-				// "2D",
-				// "3C",
-				// "3F",
-				// "2G",
-				// "2A",
-				// "3I",
-				// "5E",
-				// "5G",
-				// "4A",
-				// "3B",
-				// "2I",
-				// "1E",
-				// "2E",
-				// "3H",
-				// "5D",
-				// "2C",
-				// "1C",
-				// "4F",
-				// "4E",
-				// "3G",
-				// "5A",
-				// "2H",
-				// "3J",
-				// "3E",
-				// "3A",
-				// "4D",
-				// "2F"
-			];
+			}
 
 			display(teams);
+		});
 
-			document.addEventListener("DOMContentLoaded", function () {
-				const header = document.querySelector(".falling-container");
+		document.getElementById("logo").addEventListener("click", () => {
+			document.querySelectorAll(".falling-ball").forEach(ball => ball.remove());
+			teamsStorage[currentMode] = updateTeamsFromDOM();
+			sessionStorage.setItem("Brackets_" + currentMode, JSON.stringify(teamsStorage[currentMode]));
 
-				function createFallingBall() {
-					const ball = document.createElement("img");
-					ball.src = "volleyball.webp";
-					ball.classList.add("falling-ball");
-					const randomLeft = Math.random() * 90 + "%";
-					const randomDuration = Math.random() * 2 + 2 + "s";
-					const randomBlur = Math.random() * 5 + "px";
-					const randomRotationSpeed = Math.random() * 2 + 1 + "s";
-					const randomDirection = Math.random() < 0.5 ? "normal" : "reverse";
+			if (currentMode === "volleyball") {
+				currentMode = "football";
+				teamCount = teamCountFootball;
+				document.body.classList.add("football-mode");
+				document.getElementById("logo").src = "Elektronik-logo-red.png";
+			} else {
+				currentMode = "volleyball";
+				teamCount = teamCountVolleyball;
+				document.body.classList.remove("football-mode");
+				document.getElementById("logo").src = "Elektronik-logo-green.png";
+			}
 
-					// Apply styles
-					ball.style.left = randomLeft;
-					ball.style.animationDuration = `${randomDuration}, ${randomRotationSpeed}`;
-					ball.style.animationTimingFunction = "linear, linear";
-					ball.style.animationName = "fall, rotate";
-					ball.style.animationDirection = `normal, ${randomDirection}`;
-					ball.style.filter = `blur(${randomBlur})`;
+			// Pobierz i znormalizuj tablicę dla nowego trybu
+			let newArr = teamsStorage[currentMode] || [];
+			newArr = normalizeArray(newArr, teamCount);
+			teamsStorage[currentMode] = newArr;
+			sessionStorage.setItem("Brackets_" + currentMode, JSON.stringify(newArr));
 
-					header.appendChild(ball);
+			teams = newArr;
+			display(teams);
+		});
 
-					setTimeout(() => {
-						ball.remove();
-					}, 20 * 1000);
-				}
+		// Inicjalizacja
+		if (teams.length !== teamCount) {
+			teams = normalizeArray(teams, teamCount);
+			teamsStorage[currentMode] = teams;
+			sessionStorage.setItem("Brackets_" + currentMode, JSON.stringify(teams));
+		}
+		display(teams);
 
-				setInterval(createFallingBall, 3000);
-			});
-		</script>
-	</body>
+		document.addEventListener("DOMContentLoaded", function () {
+			const header = document.querySelector(".falling-container");
+
+			function createFallingBall() {
+				const ball = document.createElement("img");
+				ball.src = currentMode === "volleyball" ? "volleyball.png" : "pilka.png";
+				ball.classList.add("falling-ball");
+				const randomLeft = Math.random() * 90 + "%";
+				const randomDuration = Math.random() * 2 + 2 + "s";
+				const randomBlur = Math.random() * 5 + "px";
+				const randomRotationSpeed = Math.random() * 2 + 1 + "s";
+				const randomDirection = Math.random() < 0.5 ? "normal" : "reverse";
+
+				ball.style.left = randomLeft;
+				ball.style.animationDuration = `${randomDuration}, ${randomRotationSpeed}`;
+				ball.style.animationTimingFunction = "linear, linear";
+				ball.style.animationName = "fall, rotate";
+				ball.style.animationDirection = `normal, ${randomDirection}`;
+				ball.style.filter = `blur(${randomBlur})`;
+
+				header.appendChild(ball);
+
+				setTimeout(() => {
+					ball.remove();
+				}, 20 * 1000);
+			}
+
+			setInterval(createFallingBall, 3000);
+		});
+	</script>
+
+</body>
+
 </html>
