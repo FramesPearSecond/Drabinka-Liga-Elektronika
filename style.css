@@ -31,7 +31,7 @@ body {
 	min-height: 100vh;
 
 	display: flex;
-	gap: 1rem;
+	gap: 3rem;
 	flex-direction: column;
 }
 
@@ -291,7 +291,7 @@ h1::after {
 	z-index: 2;
 	row-gap: 5vw;
 	width: 90vw;
-	top: 20.5vw;
+	top: calc(20.5vw + 3.25rem);
 }
 
 #level2 .match {
@@ -434,6 +434,10 @@ body.football-mode #level2 .match.additional:nth-child(5),
 body.football-mode #level2 .match.additional:nth-child(6) {
 	margin-top: -5vh;
 	grid-row: 3;
+}
+
+body.football-mode .day-label {
+    display: none;
 }
 
 .day-label {
