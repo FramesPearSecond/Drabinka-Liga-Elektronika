@@ -24,7 +24,7 @@
 body {
 	margin: 0;
 	padding: 0 5vw;
-	background: radial-gradient(circle at top right, #ddf0e5 0%, #eef7f1 55%, #ffffff 100%);
+    background-color: #eef7f1;
 	background-attachment: fixed;
 	color: var(--neutral-700);
 	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -320,7 +320,8 @@ body.football-mode {
 	--neutral-300: rgba(92, 26, 26, 0.22);
 	--shadow-soft: 0px 25px 40px rgba(92, 26, 26, 0.18);
 	--shadow-card: 0px 12px 28px rgba(92, 26, 26, 0.14);
-	background: radial-gradient(circle at top right, #fadadd 0%, #fdeeed 55%, #ffffff 100%);
+	/* background: radial-gradient(circle at top right, #fadadd 0%, #fdeeed 55%, #ffffff 100%); */
+    background-color: #fdeeed;
 }
 
 body.football-mode h1::after {
@@ -466,12 +467,12 @@ body.football-mode .day-label {
 
 /* nad pierwszymi meczami */
 .day-label.monday {
-	top: 9vw;
+	top: 11vw;
 	left: 10vw;
 }
 
 /* nad drugą częścią */
 .day-label.tuesday {
-	top: 32vw;
+	top: 33vw;
 	left: 10vw;
 }
